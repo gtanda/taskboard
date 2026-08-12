@@ -11,13 +11,13 @@ public class TaskItem
     public Guid ProjectId { get; set; }
     public Project? Project { get; set; }
 
-    public TaskItem(string title, string? description, TaskState state, DateTime created, int position, Guid projectId, Project? project)
+    public TaskItem(string title, string? description, int position, Guid projectId, Project? project)
     {
         Id = Guid.NewGuid();
         Title = title;
         Description = description;
-        State = state;
-        Created = created;
+        State = TaskState.Todo;
+        Created = DateTime.UtcNow;
         Position = position;
         ProjectId = projectId;
         Project = project;
