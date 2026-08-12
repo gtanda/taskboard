@@ -11,6 +11,4 @@ public class TaskBoardDbContext : DbContext
     public TaskBoardDbContext(DbContextOptions<TaskBoardDbContext> options) : base(options)
     {
     }
-    
-    
 }
