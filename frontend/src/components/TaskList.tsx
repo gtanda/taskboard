@@ -3,6 +3,7 @@ import {fetchTasksByProjectId} from "../api/taskItem.ts";
 import type {TaskItem} from "../types/taskItem.ts";
 import {TaskState} from "../types/taskState.ts";
 import TaskColumn from "./TaskColumn.tsx";
+import CreateTaskForm from "./CreateTaskForm.tsx";
 
 interface TaskListProps {
     projectId: string;
@@ -28,8 +29,14 @@ export default function TaskList({projectId} : TaskListProps)  {
         
     }, [projectId])
     
+    const handleTaskCreated = (newTask : TaskItem) => {
+        setTasks((prevTasks) => [...prevTasks, newTask]);
+    }
+    
+    
     return <>
         {error && <p>{error}</p>}
+        <CreateTaskForm projectId={projectId} onTaskCreate={handleTaskCreated} />
             <TaskColumn columnTitle={"To Do"} tasks={todoTasks} />
             <TaskColumn columnTitle={"In Progress"} tasks={inProgressTasks} />
             <TaskColumn columnTitle={"Completed"} tasks={completedTasks} />

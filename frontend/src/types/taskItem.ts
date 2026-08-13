@@ -9,3 +9,8 @@ export interface TaskItem {
     position: number;
     projectId: string
 }
+
+export interface CreateTaskDto {
+    title: string;
+    description: string | null;
+}
