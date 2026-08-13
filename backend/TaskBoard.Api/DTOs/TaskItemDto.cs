@@ -11,4 +11,18 @@ public class TaskItemDto
     public DateTime Created { get; set; }
     public int Position  { get; set; }
     public Guid ProjectId { get; set; }
+
+    public static TaskItemDto FromEntity(TaskItem task)
+    {
+        return new TaskItemDto
+        {
+            Id = task.Id,
+            Title = task.Title,
+            Description = task.Description,
+            State = task.State,
+            Created = task.Created,
+            Position = task.Position,
+            ProjectId = task.ProjectId
+        };
+    }
 }

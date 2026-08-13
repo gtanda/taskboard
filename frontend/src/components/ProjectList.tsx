@@ -23,7 +23,7 @@ export default function ProjectList() {
     return <>
         {error && <p>{error}</p>}
         <ul>
-            {projects.map((project) => <li key = {project.id}>{project.title}</li>)}
+            {projects.map((project : Project) => <li key = {project.id}>{project.title} {project.id}</li>)}    
         </ul>
     </>
     

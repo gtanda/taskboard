@@ -17,22 +17,13 @@ public class TasksController : ControllerBase
     {
         _context = context;
     }
-
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<TaskItemDto>>> GetTasksAsync()
+    
+    [HttpGet("/api/projects/{projectId}/tasks")]
+    public async Task<ActionResult<IEnumerable<TaskItemDto>>> GetTasksByProjectAsync(Guid projectId)
     {
-        var tasks = await _context.TaskItems.ToListAsync();
-        var taskDtos = tasks.Select(t => new TaskItemDto
-        {
-            Id = t.Id, 
-            Title = t.Title, 
-            Description = t.Description, 
-            Created =t.Created,
-            State = t.State, 
-            Position = t.Position,
-            ProjectId = t.ProjectId
-        });
-        return Ok(taskDtos);
+        var projectTaskItems = await _context.TaskItems.Where(t => t.ProjectId == projectId).ToListAsync();
+        var taskItemDtos = projectTaskItems.Select(TaskItemDto.FromEntity);
+        return Ok(taskItemDtos);
     }
 
     [HttpGet("{id}")]
@@ -40,19 +31,12 @@ public class TasksController : ControllerBase
     {
         var task = await _context.TaskItems.FindAsync(id);
         if (task is null) return NotFound();
-        var taskDto = new TaskItemDto
-        {
-            Id = task.Id, 
-            Title = task.Title, 
-            Description = task.Description, 
-            Created = task.Created,
-            State = task.State, 
-            Position = task.Position,
-            ProjectId = task.ProjectId
-        };
+        var taskDto = TaskItemDto.FromEntity(task);
         
         return Ok(taskDto);
     }
+
+
 
     [HttpPost("/api/projects/{projectId}/tasks")]
     public async Task<ActionResult<TaskItemDto>> CreateTaskAsync(Guid projectId, CreateTaskDto dto)
@@ -63,16 +47,7 @@ public class TasksController : ControllerBase
         var newTask = new TaskItem(dto.Title, dto.Description, position, project.Id, project);
         _context.Add(newTask);
         await _context.SaveChangesAsync();
-        var taskDto = new TaskItemDto
-        {
-            Id = newTask.Id, 
-            Title = newTask.Title, 
-            Description = newTask.Description, 
-            Created = newTask.Created,
-            State = newTask.State, 
-            Position = newTask.Position,
-            ProjectId = newTask.ProjectId
-        };
+        var taskDto = TaskItemDto.FromEntity(newTask);
         return CreatedAtAction("GetTaskById", new {id = newTask.Id}, taskDto);
     }
     
