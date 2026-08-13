@@ -1,5 +1,5 @@
 ﻿import {useEffect, useState} from "react";
-import {fetchTasksByProjectId} from "../api/taskItem.ts";
+import {deleteTask, fetchTasksByProjectId} from "../api/taskItem.ts";
 import type {TaskItem} from "../types/taskItem.ts";
 import {TaskState} from "../types/taskState.ts";
 import TaskColumn from "./TaskColumn.tsx";
@@ -21,8 +21,8 @@ export default function TaskList({projectId} : TaskListProps)  {
             try {
                 const response = await fetchTasksByProjectId(projectId);
                 setTasks(response);
-            } catch (err) {
-                setError(err instanceof Error ? err.message : "An unknown error occurred.");
+            } catch (error) {
+                setError(error instanceof Error ? error.message : "An unknown error occurred.");
             }
         }
         fetchProjectTasks();
@@ -33,12 +33,20 @@ export default function TaskList({projectId} : TaskListProps)  {
         setTasks((prevTasks) => [...prevTasks, newTask]);
     }
     
+    const handleTaskDelete = async (taskId : string) => {
+        try {
+            await deleteTask(taskId);
+            setTasks((currentTasks) => currentTasks.filter(t => t.id !== taskId));
+        } catch (error) {
+            setError(error instanceof Error ? error.message : "An unknown error occurred.");
+        }
+    }
     
     return <>
         {error && <p>{error}</p>}
         <CreateTaskForm projectId={projectId} onTaskCreate={handleTaskCreated} />
-            <TaskColumn columnTitle={"To Do"} tasks={todoTasks} />
-            <TaskColumn columnTitle={"In Progress"} tasks={inProgressTasks} />
-            <TaskColumn columnTitle={"Completed"} tasks={completedTasks} />
+            <TaskColumn columnTitle={"To Do"} onTaskDelete={handleTaskDelete} tasks={todoTasks} />
+            <TaskColumn columnTitle={"In Progress"} onTaskDelete={handleTaskDelete} tasks={inProgressTasks} />
+            <TaskColumn columnTitle={"Completed"} onTaskDelete={handleTaskDelete} tasks={completedTasks} />
     </>
 }
