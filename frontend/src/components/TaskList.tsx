@@ -4,14 +4,19 @@ import type {TaskItem, UpdateTaskDto} from "../types/taskItem.ts";
 import {TaskState} from "../types/taskState.ts";
 import TaskColumn from "./TaskColumn.tsx";
 import CreateTaskForm from "./CreateTaskForm.tsx";
+import {useParams} from "react-router-dom";
 
-interface TaskListProps {
-    projectId: string;
-}
 
-export default function TaskList({projectId} : TaskListProps)  {
+
+export default function TaskList()  {
     const [tasks, setTasks] = useState<TaskItem[]>([]);
     const [error, setError] = useState("");
+    const {projectId} = useParams();
+    
+    if (!projectId) {
+        return <p>No project selected.</p>
+    }
+    
     const todoTasks = tasks.filter((t) => t.state === TaskState.Todo);
     const inProgressTasks = tasks.filter((t) => t.state === TaskState.InProgress);
     const completedTasks = tasks.filter((t) => t.state === TaskState.Completed);

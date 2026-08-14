@@ -1,5 +1,6 @@
 ﻿import type {Project} from "../types/project.ts";
 import {useState} from "react";
+import {Link} from "react-router-dom";
 
 
 
@@ -13,6 +14,7 @@ export default function ProjectCard({project, onProjectUpdate, onProjectDelete}:
     const [isEditing, setIsEditing] = useState(false);
     const [title, setTitle] = useState(project.title);
     const [description, setDescription] = useState(project.description ?? "");
+    
     
     
     const handleUpdate = (e: React.FormEvent) => {
@@ -45,8 +47,7 @@ export default function ProjectCard({project, onProjectUpdate, onProjectDelete}:
     
     return (
         <div>
-            <h2>{project.title}</h2>
-            <h2>{project.id}</h2>
+            <Link to={`/projects/${project.id}`}><h2>{project.title}</h2></Link>
             <h4>{project.description}</h4>
             <button onClick={() => setIsEditing(true)}>Edit</button>
             <button onClick={() => onProjectDelete(project.id)} >Delete</button>
