@@ -14,3 +14,10 @@ export interface CreateTaskDto {
     title: string;
     description: string | null;
 }
+
+export interface UpdateTaskDto {
+    title: string;
+    description: string | null;
+    state: TaskState;
+    position: number;
+}

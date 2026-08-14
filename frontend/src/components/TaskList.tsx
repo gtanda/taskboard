@@ -1,6 +1,6 @@
 ﻿import {useEffect, useState} from "react";
-import {deleteTask, fetchTasksByProjectId} from "../api/taskItem.ts";
-import type {TaskItem} from "../types/taskItem.ts";
+import {deleteTask, fetchTasksByProjectId, updateTask} from "../api/taskItem.ts";
+import type {TaskItem, UpdateTaskDto} from "../types/taskItem.ts";
 import {TaskState} from "../types/taskState.ts";
 import TaskColumn from "./TaskColumn.tsx";
 import CreateTaskForm from "./CreateTaskForm.tsx";
@@ -42,11 +42,27 @@ export default function TaskList({projectId} : TaskListProps)  {
         }
     }
     
+    const handleTaskUpdate = async (updatedTask: TaskItem) => {
+        try {
+          const dto : UpdateTaskDto = {
+              title: updatedTask.title,
+              description: updatedTask.description,
+              state: updatedTask.state,
+              position: updatedTask.position
+          }
+          await updateTask(updatedTask.id, dto);
+          setTasks((currentTasks) => currentTasks.map((t) => t.id === updatedTask.id ? updatedTask : t))
+        } catch (error) {
+            setError(error instanceof Error ? error.message : "An unknown error occurred.");
+        }
+        
+    }
+    
     return <>
         {error && <p>{error}</p>}
         <CreateTaskForm projectId={projectId} onTaskCreate={handleTaskCreated} />
-            <TaskColumn columnTitle={"To Do"} onTaskDelete={handleTaskDelete} tasks={todoTasks} />
-            <TaskColumn columnTitle={"In Progress"} onTaskDelete={handleTaskDelete} tasks={inProgressTasks} />
-            <TaskColumn columnTitle={"Completed"} onTaskDelete={handleTaskDelete} tasks={completedTasks} />
+            <TaskColumn columnTitle={"To Do"} onTaskDelete={handleTaskDelete} onTaskUpdate={handleTaskUpdate} tasks={todoTasks}  />
+            <TaskColumn columnTitle={"In Progress"} onTaskDelete={handleTaskDelete} onTaskUpdate={handleTaskUpdate} tasks={inProgressTasks} />
+            <TaskColumn columnTitle={"Completed"} onTaskDelete={handleTaskDelete} onTaskUpdate={handleTaskUpdate} tasks={completedTasks} />
     </>
 }
