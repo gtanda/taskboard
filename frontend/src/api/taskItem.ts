@@ -1,4 +1,4 @@
-﻿import type {CreateTaskDto, TaskItem, UpdateTaskDto} from "../types/taskItem.ts";
+﻿import type {CreateTaskDto, TaskItem, TaskReorderDto, UpdateTaskDto} from "../types/taskItem.ts";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -33,6 +33,17 @@ export async function  updateTask (taskId: string, dto: UpdateTaskDto) : Promise
     
     if (!response.ok) {
         throw new Error(`Failed to update task: ${response.status}`);
+    }
+}
+
+export async function reorderTasks(updates: TaskReorderDto[]) : Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/tasks/reorder`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(updates),
+    })
+    if (!response.ok) {
+        throw new Error(`Failed to reorder tasks: ${response.status}`);
     }
 }
 

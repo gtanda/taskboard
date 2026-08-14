@@ -21,3 +21,9 @@ export interface UpdateTaskDto {
     state: TaskState;
     position: number;
 }
+
+export interface TaskReorderDto {
+    taskId: string;
+    newPosition: number;
+    newState: TaskState;
+}
