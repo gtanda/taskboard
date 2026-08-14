@@ -4,7 +4,7 @@ import type {TaskItem, UpdateTaskDto} from "../types/taskItem.ts";
 import {TaskState} from "../types/taskState.ts";
 import TaskColumn from "./TaskColumn.tsx";
 import CreateTaskForm from "./CreateTaskForm.tsx";
-import {useParams} from "react-router-dom";
+import {Link, Navigate, useParams} from "react-router-dom";
 
 
 
@@ -14,7 +14,7 @@ export default function TaskList()  {
     const {projectId} = useParams();
     
     if (!projectId) {
-        return <p>No project selected.</p>
+        return <Navigate to={"/not-found"}/>;
     }
     
     const todoTasks = tasks.filter((t) => t.state === TaskState.Todo);
@@ -65,6 +65,7 @@ export default function TaskList()  {
     
     return <>
         {error && <p>{error}</p>}
+        <Link to={"/"}>Go Back</Link>
         <CreateTaskForm projectId={projectId} onTaskCreate={handleTaskCreated} />
             <TaskColumn columnTitle={"To Do"} onTaskDelete={handleTaskDelete} onTaskUpdate={handleTaskUpdate} tasks={todoTasks}  />
             <TaskColumn columnTitle={"In Progress"} onTaskDelete={handleTaskDelete} onTaskUpdate={handleTaskUpdate} tasks={inProgressTasks} />
