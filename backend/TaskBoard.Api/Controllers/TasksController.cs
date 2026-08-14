@@ -77,4 +77,34 @@ public class TasksController : ControllerBase
         return NoContent();
     }
     
+    [HttpPut("/api/tasks/reorder")]
+    public async Task<ActionResult> ReorderTasksAsync(List<TaskReorderDto> updates)
+    {
+        using var transaction = await _context.Database.BeginTransactionAsync();
+        try
+        {
+            foreach (var update in updates)
+            {
+                var task = await _context.TaskItems.FindAsync(update.TaskId);
+                if (task is null)
+                {
+                    await transaction.RollbackAsync();
+                    return NotFound();
+                }
+
+                task.Position = update.NewPosition;
+                task.State = update.NewState;
+            }
+            
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+            return NoContent();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+    
 }
