@@ -20,4 +20,6 @@ public class TaskItemDtoTests
         var timeDifference = DateTime.UtcNow - dto.Created;
         Assert.True(timeDifference.TotalSeconds < 2);
     }
+
+
 }
