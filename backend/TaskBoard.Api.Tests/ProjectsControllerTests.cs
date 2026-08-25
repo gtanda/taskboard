@@ -14,7 +14,7 @@ public class ProjectsControllerTests : IClassFixture<TaskBoardApiFactory>
     }
 
     [Fact]
-    public async Task PostProject_ReturnsCreate()
+    public async Task PostProject_ReturnsCreated()
     {
         var newProject = new { title = "Integration Testing Project", description = "Created by test" };
 
