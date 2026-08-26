@@ -67,6 +67,21 @@ public class TasksControllerTests : IClassFixture<TaskBoardApiFactory>
         
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
+    
+    [Fact]
+    public async Task CreateTask_ReturnsCorrectLocationHeader()
+    {
+        var projectId = await CreateTestProjectAsync();
+        var newTask = new { title = "task1", description = "task 1 description" };
+
+        var response = await _client.PostAsJsonAsync($"/api/projects/{projectId}/tasks", newTask);
+        
+        Assert.NotNull(response.Headers.Location);
+        
+        var createdTask = await response.Content.ReadFromJsonAsync<TaskItemDto>();
+
+        Assert.Contains(createdTask!.Id.ToString(), response.Headers.Location!.ToString());
+    }
 
     [Fact]
     public async Task PostThenGetTask_ReturnsSameData()
